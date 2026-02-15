@@ -1,7 +1,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getPokemons } from '../../services/pokemonService'
+import { getPokemons, getPokemonDetail } from '../../services/pokemonService'
 import BaseSkeleton from '../ui/BaseSkeleton.vue'
+import PokemonModal from '../pokemon/PokemonModal.vue'
 
 const pokemons = ref([])
 const isLoading = ref(false)
@@ -10,7 +11,6 @@ const error = ref(null)
 const fetchPokemons = async () => {
 	isLoading.value = true
 	error.value = null
-
 	try {
 		const data = await getPokemons()
 		pokemons.value = data.results
@@ -19,6 +19,27 @@ const fetchPokemons = async () => {
 	} finally {
 		isLoading.value = false
 	}
+}
+
+// Modal
+const showModal = ref(false)
+const selectedPokemon = ref(null)
+const detailLoading = ref(false)
+
+const openModal = async (name) => {
+  showModal.value = true
+  detailLoading.value = true
+  selectedPokemon.value = null
+
+  try {
+    selectedPokemon.value = await getPokemonDetail(name)
+  } finally {
+    detailLoading.value = false
+  }
+}
+
+const closeModal = () => {
+  showModal.value = false
 }
 
 onMounted(() => {
@@ -54,11 +75,19 @@ onMounted(() => {
 				v-for="pokemon in pokemons"
 				:key="pokemon.id"
 				class="card"
+				@click="openModal(pokemon.name)"
 			>
 				<img :src="pokemon.image" :alt="pokemon.name" class="pokemon-img" />
 				<h2 class="pokemon-name">{{ pokemon.name }}</h2>
 			</div>
 		</div>
+
+		<PokemonModal
+			:selectedPokemon="selectedPokemon"
+			:detailLoading="detailLoading"
+			:showModal="showModal"
+      @closeModal="closeModal"
+		/>
 	</div>
 </template>
 
