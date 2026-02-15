@@ -3,16 +3,27 @@ import { ref, onMounted } from 'vue'
 import { getPokemons, getPokemonDetail } from '../../services/pokemonService'
 import BaseSkeleton from '../ui/BaseSkeleton.vue'
 import PokemonModal from '../pokemon/PokemonModal.vue'
+import Pagination from '../ui/Pagination.vue'
 
 const pokemons = ref([])
 const isLoading = ref(false)
 const error = ref(null)
 
-const fetchPokemons = async () => {
+// Pagination
+const currentPage = ref(1)
+const totalPages = ref(0)
+const limit = 20
+
+const fetchPokemons = async (page = 1) => {
 	isLoading.value = true
 	error.value = null
 	try {
-		const data = await getPokemons()
+		currentPage.value = page
+    const offset = (page - 1) * limit
+
+		const data = await getPokemons(offset, limit)
+
+		totalPages.value = data.count / limit
 		pokemons.value = data.results
 	} catch {
 		error.value = 'Error al cargar Pokémon'
@@ -81,6 +92,12 @@ onMounted(() => {
 				<h2 class="pokemon-name">{{ pokemon.name }}</h2>
 			</div>
 		</div>
+
+		<Pagination
+			:currentPage="currentPage"
+			:totalPages="totalPages"
+      @changePage="fetchPokemons"
+		/>
 
 		<PokemonModal
 			:selectedPokemon="selectedPokemon"
