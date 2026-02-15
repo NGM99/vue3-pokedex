@@ -4,6 +4,7 @@ import { getPokemons, getPokemonDetail } from '../../services/pokemonService'
 import BaseSkeleton from '../ui/BaseSkeleton.vue'
 import PokemonModal from '../pokemon/PokemonModal.vue'
 import Pagination from '../ui/Pagination.vue'
+import Search from '../ui/Search.vue'
 
 const pokemons = ref([])
 const isLoading = ref(false)
@@ -19,7 +20,7 @@ const fetchPokemons = async (page = 1) => {
 	error.value = null
 	try {
 		currentPage.value = page
-    const offset = (page - 1) * limit
+		const offset = (page - 1) * limit
 
 		const data = await getPokemons(offset, limit)
 
@@ -38,19 +39,47 @@ const selectedPokemon = ref(null)
 const detailLoading = ref(false)
 
 const openModal = async (name) => {
-  showModal.value = true
-  detailLoading.value = true
-  selectedPokemon.value = null
+	showModal.value = true
+	detailLoading.value = true
+	selectedPokemon.value = null
 
-  try {
-    selectedPokemon.value = await getPokemonDetail(name)
-  } finally {
-    detailLoading.value = false
-  }
+	try {
+		selectedPokemon.value = await getPokemonDetail(name)
+	} finally {
+		detailLoading.value = false
+	}
 }
 
 const closeModal = () => {
-  showModal.value = false
+	showModal.value = false
+}
+
+const handleSearch = async (query) => {
+	if (!query) {
+		fetchPokemons(1)
+		return
+	}
+
+	isLoading.value = true
+	error.value = null
+	pokemons.value = []
+
+	try {
+		const pokemon = await getPokemonDetail(query)
+		pokemons.value = [
+			{
+				id: pokemon.id,
+				name: pokemon.name,
+				image: pokemon.image
+			}
+		]
+
+		totalPages.value = 0
+	} catch {
+		error.value = "Pokémon no Encontrado"
+	} finally {
+		isLoading.value = false
+	}
 }
 
 onMounted(() => {
@@ -65,46 +94,28 @@ onMounted(() => {
 			<h1 class="title">Pokédex</h1>
 		</div>
 
+		<Search :placeholder="'Buscar Pokemon'" @search="handleSearch" />
+
 		<div v-if="isLoading" class="grid" style="margin-top: 1rem;">
-      <div class="card" v-for="n in 20" :key="n">
-        <BaseSkeleton
-					width="100%"
-					height="150px"
-					borderRadius="12px" 
-				/>
-        <div style="margin-top: 1rem;">
-          <BaseSkeleton
-						width="100%"
-						height="20px"
-					/>
-        </div>
-      </div>
-    </div>
+			<div class="card" v-for="n in 20" :key="n">
+				<BaseSkeleton width="100%" height="150px" borderRadius="12px" />
+				<div style="margin-top: 1rem;">
+					<BaseSkeleton width="100%" height="20px" />
+				</div>
+			</div>
+		</div>
 
 		<div class="grid">
-			<div
-				v-for="pokemon in pokemons"
-				:key="pokemon.id"
-				class="card"
-				@click="openModal(pokemon.name)"
-			>
+			<div v-for="pokemon in pokemons" :key="pokemon.id" class="card" @click="openModal(pokemon.name)">
 				<img :src="pokemon.image" :alt="pokemon.name" class="pokemon-img" />
 				<h2 class="pokemon-name">{{ pokemon.name }}</h2>
 			</div>
 		</div>
 
-		<Pagination
-			:currentPage="currentPage"
-			:totalPages="totalPages"
-      @changePage="fetchPokemons"
-		/>
+		<Pagination :currentPage="currentPage" :totalPages="totalPages" @changePage="fetchPokemons" />
 
-		<PokemonModal
-			:selectedPokemon="selectedPokemon"
-			:detailLoading="detailLoading"
-			:showModal="showModal"
-      @closeModal="closeModal"
-		/>
+		<PokemonModal :selectedPokemon="selectedPokemon" :detailLoading="detailLoading" :showModal="showModal"
+			@closeModal="closeModal" />
 	</div>
 </template>
 
@@ -133,6 +144,7 @@ onMounted(() => {
 }
 
 .grid {
+	margin-top: 1rem;
 	display: grid;
 	gap: 1.5rem;
 	grid-template-columns: repeat(auto-fit, minmax(220px, 280px));
