@@ -21,6 +21,17 @@ const emit = defineEmits(['closeModal'])
 const handleCloseModal = () => {
 	emit('closeModal')
 }
+
+const typeColors = {
+	fire: '#f08030',
+	water: '#6890f0',
+	grass: '#78c850',
+	electric: '#f8d030',
+	psychic: '#f85888',
+	poison: '#a040a0',
+	flying: '#a890f0',
+	normal: '#a8a878'
+}
 </script>
 
 <template>
@@ -40,9 +51,8 @@ const handleCloseModal = () => {
 				<h2 class="modal-name">{{ props.selectedPokemon.name }}</h2>
 
 				<div class="types">
-					<span
-						v-for="type in props.selectedPokemon.types" 
-						:key="type" 
+					<span v-for="type in props.selectedPokemon.types" class="type-badge" :key="type"
+						:style="{ backgroundColor: typeColors[type] || '#ccc' }"
 					>
 						{{ type }}
 					</span>
@@ -108,6 +118,16 @@ const handleCloseModal = () => {
 	background: transparent;
 	font-size: 1.2rem;
 	cursor: pointer;
+}
+
+.type-badge {
+	display: inline-block;
+	padding: 0.3rem 0.8rem;
+	margin: 0.2rem;
+	border-radius: 20px;
+	background: #eee;
+	font-size: 0.8rem;
+	text-transform: capitalize;
 }
 
 @keyframes fadeIn {
