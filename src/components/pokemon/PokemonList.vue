@@ -5,6 +5,7 @@ import BaseSkeleton from '../ui/BaseSkeleton.vue'
 import PokemonModal from '../pokemon/PokemonModal.vue'
 import Pagination from '../ui/Pagination.vue'
 import Search from '../ui/Search.vue'
+import AlertMessage from '../ui/AlertMessage.vue'
 
 const pokemons = ref([])
 const isLoading = ref(false)
@@ -112,7 +113,11 @@ onMounted(() => {
 			</div>
 		</div>
 
-		<Pagination :currentPage="currentPage" :totalPages="totalPages" @changePage="fetchPokemons" />
+		<AlertMessage v-if="error" :type="'danger'">
+      {{ error }}
+    </AlertMessage>
+
+		<Pagination v-if="pokemons.length" :currentPage="currentPage" :totalPages="totalPages" @changePage="fetchPokemons" />
 
 		<PokemonModal :selectedPokemon="selectedPokemon" :detailLoading="detailLoading" :showModal="showModal"
 			@closeModal="closeModal" />
