@@ -1,7 +1,7 @@
-import axios from "axios"
+import axios from 'axios'
 
 const api = axios.create({
-	baseURL: "https://pokeapi.co/api/v2",
+	baseURL: 'https://pokeapi.co/api/v2',
 	timeout: 5000
 })
 
@@ -28,6 +28,23 @@ const getPokemons = async (offset = 0, limit = 20) => {
 	}
 }
 
+const mapPokemon = (pokemon) => {
+	return {
+		id: pokemon.id,
+		name: pokemon.name,
+		image: pokemon.sprites.other['official-artwork'].front_default,
+		types: pokemon.types.map(e => e.type.name),
+		height: pokemon.height,
+		weight: pokemon.weight
+	}
+}
+
+const getPokemonDetail = async (name) => {
+	const response = await api.get(`/pokemon/${name}`)
+	return mapPokemon(response.data)
+}
+
 export {
-	getPokemons
+	getPokemons,
+	getPokemonDetail,
 }
