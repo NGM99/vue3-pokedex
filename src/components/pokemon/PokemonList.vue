@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { getPokemons } from '../../services/pokemonService'
+import BaseSkeleton from '../ui/BaseSkeleton.vue'
 
 const pokemons = ref([])
 const isLoading = ref(false)
@@ -13,7 +14,6 @@ const fetchPokemons = async () => {
 	try {
 		const data = await getPokemons()
 		pokemons.value = data.results
-
 	} catch {
 		error.value = 'Error al cargar Pokémon'
 	} finally {
@@ -32,6 +32,22 @@ onMounted(() => {
 			<img src="../../assets/images/pokebola_logo_light-mode.png" alt="Pokeball" class="title-icon" />
 			<h1 class="title">Pokédex</h1>
 		</div>
+
+		<div v-if="isLoading" class="grid" style="margin-top: 1rem;">
+      <div class="card" v-for="n in 20" :key="n">
+        <BaseSkeleton
+					width="100%"
+					height="150px"
+					borderRadius="12px" 
+				/>
+        <div style="margin-top: 1rem;">
+          <BaseSkeleton
+						width="100%"
+						height="20px"
+					/>
+        </div>
+      </div>
+    </div>
 
 		<div class="grid">
 			<div
