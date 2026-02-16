@@ -11,6 +11,7 @@ const getPokemons = async (offset = 0, limit = 20) => {
 	const { count, next, previous, results } = response.data
 
 	const formattedResults = results.map(pokemon => {
+		// Extract Pokémon ID from URL to build official artwork image URL
 		const id = pokemon.url.split('/').at(-2)
 
 		return {
