@@ -64,6 +64,11 @@ const cleanInput = () => {
 	max-width: 500px;
 }
 
+.search-group:focus-within {
+  border-color: #ef5350;
+  box-shadow: 0 0 0 3px rgba(239, 83, 80, 0.15);
+}
+
 .search-input {
 	width: 100%;
 	max-width: 600px;

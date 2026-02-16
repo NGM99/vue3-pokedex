@@ -59,7 +59,7 @@ const typeColors = {
 				</div>
 
 				<div class="stats">
-					<p>Altura:{{ props.selectedPokemon.height }}</p>
+					<p>Altura: {{ props.selectedPokemon.height }}</p>
 					<p>Peso: {{ props.selectedPokemon.weight }}</p>
 				</div>
 			</div>
@@ -107,6 +107,7 @@ const typeColors = {
 }
 
 .stats p {
+	font-weight: 600;
 	margin: 0.3rem 0;
 }
 

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { getPokemons, getPokemonDetail } from '../../services/pokemonService'
 import BaseSkeleton from '../ui/BaseSkeleton.vue'
 import PokemonModal from '../pokemon/PokemonModal.vue'
@@ -21,12 +21,24 @@ const fetchPokemons = async (page = 1) => {
 	error.value = null
 	try {
 		currentPage.value = page
+
+		// Calculate offset based on selected page
 		const offset = (page - 1) * limit
 
 		const data = await getPokemons(offset, limit)
 
+		// Calculate total pages from API response count 
 		totalPages.value = data.count / limit
+
 		pokemons.value = data.results
+
+		// Wait for DOM update before smooth scrolling
+		await nextTick()
+
+		window.scrollTo({
+			top: 0,
+			behavior: 'smooth'
+		})
 	} catch {
 		error.value = 'Error al cargar Pokémon'
 	} finally {
@@ -56,6 +68,7 @@ const closeModal = () => {
 }
 
 const handleSearch = async (query) => {
+	// If search is cleared, reload paginated list	
 	if (!query) {
 		fetchPokemons(1)
 		return
@@ -90,11 +103,6 @@ onMounted(() => {
 
 <template>
 	<div class="container">
-		<div class="title-group">
-			<img src="../../assets/images/pokebola_logo_light-mode.png" alt="Pokeball" class="title-icon" />
-			<h1 class="title">Pokédex</h1>
-		</div>
-
 		<Search :placeholder="'Buscar Pokemon'" @search="handleSearch" />
 
 		<div v-if="isLoading" class="grid" style="margin-top: 1rem;">
@@ -114,10 +122,11 @@ onMounted(() => {
 		</div>
 
 		<AlertMessage v-if="error" :type="'danger'">
-      {{ error }}
-    </AlertMessage>
+			{{ error }}
+		</AlertMessage>
 
-		<Pagination v-if="pokemons.length" :currentPage="currentPage" :totalPages="totalPages" @changePage="fetchPokemons" />
+		<Pagination v-if="pokemons.length" :currentPage="currentPage" :totalPages="totalPages"
+			@changePage="fetchPokemons" />
 
 		<PokemonModal :selectedPokemon="selectedPokemon" :detailLoading="detailLoading" :showModal="showModal"
 			@closeModal="closeModal" />
@@ -129,23 +138,6 @@ onMounted(() => {
 	padding: 1rem;
 	max-width: 1200px;
 	margin: auto;
-}
-
-.title {
-	font-size: 2rem;
-	color: #ffcb05;
-}
-
-.title-group {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 0.8rem;
-}
-
-.title-icon {
-	width: 32px;
-	height: 32px;
 }
 
 .grid {
