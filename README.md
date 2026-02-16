@@ -1,5 +1,34 @@
-# Vue 3 + Vite
+# Pokedex App
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Aplicación web desarrollada con Vue 3 (Composition API) que consume la PokeAPI para mostrar una lista paginada de Pokémon o realizar búsquedas individuales por nombre. 
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+---
+
+## Requisitos
+
+- Node.js v18 o superior
+- npm v9 o superior
+
+---
+
+## Instalación
+
+1. Clona el repositorio: git clone https://github.com/NGM99/vue3-pokedex.git
+
+2. Entra al proyecto:
+cd vue3-pokedex
+
+3. Instala las dependencias:
+npm install
+
+---
+
+## Ejecutar el Proyecto
+
+Modo desarrollo:
+npm run dev
+
+El servidor se ejecutará en:
+http://localhost:5173
+
+---
