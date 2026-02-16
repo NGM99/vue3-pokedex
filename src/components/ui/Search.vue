@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import SearchIcon from '../../assets/icons/search.svg'
 
 const props = defineProps({
 	placeholder: {
@@ -33,6 +34,11 @@ const cleanInput = () => {
 <template>
 	<div class="search-container">
 		<div class="search-group">
+			<img 
+				:src="SearchIcon" 
+				alt="Search icon"
+				class="search-icon"
+			/>
 			<input
 				v-model="query"
 				:placeholder="props.placeholder" 
@@ -43,7 +49,7 @@ const cleanInput = () => {
 				v-show="query.length"
 				@click="cleanInput"
 			>
-				X
+				✕
 			</button>
 		</div>
 	</div>
@@ -88,7 +94,26 @@ button {
 	top: 50%;
 	transform: translateY(-50%);
 	border: none;
+	border-radius: 50%;
 	background: transparent;
 	cursor: pointer;
+}
+
+button:hover {
+	background-color: #ef5350;
+	color: #fff;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+}
+
+.search-input {
+  padding: 0.5rem 2rem 0.5rem 2rem;
 }
 </style>
